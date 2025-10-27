@@ -9,6 +9,7 @@ import { useDocumentData } from "react-firebase-hooks/firestore";
 import useOwner from "@/lib/useOwner";
 import Editor from "@/components/Editor";
 import DeleteDocument from "@/components/DeleteDocument";
+import InviteUser from "@/components/InviteUser";
 
 function Document({ id }: { id: string }) {
   const [data, loading, error] = useDocumentData(doc(db, "documents", id));
@@ -46,14 +47,17 @@ function Document({ id }: { id: string }) {
           {isOwner && (
             <>
               {/* Invite User */}
-              <DeleteDocument />
+              <InviteUser />
+
               {/* Delete Document */}
+              <DeleteDocument />
             </>
           )}
         </form>
       </div>
       <div>
         {/* Manage Users */}
+
         {/* Avatars */}
       </div>
 
