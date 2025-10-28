@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
+        <body suppressHydrationWarning>
           <Header />
           <div className="flex min-h-screen">
             {/* sidebar */}

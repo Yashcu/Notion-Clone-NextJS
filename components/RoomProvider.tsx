@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import LiveCursorProvider from "@/components/LiveCursorProvider";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import {
@@ -14,6 +15,12 @@ function RoomProvider({
   roomId: string;
   children: React.ReactNode;
 }) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <RoomProviderWrapper
       id={roomId}
@@ -22,7 +29,11 @@ function RoomProvider({
       }}
     >
       <ClientSideSuspense fallback={<LoadingSpinner />}>
-        <LiveCursorProvider>{children}</LiveCursorProvider>
+        {isMounted ? (
+          <LiveCursorProvider>{children}</LiveCursorProvider>
+        ) : (
+          <LoadingSpinner />
+        )}
       </ClientSideSuspense>
     </RoomProviderWrapper>
   );

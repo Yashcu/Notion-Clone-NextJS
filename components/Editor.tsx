@@ -1,36 +1,84 @@
 "use client";
 
 import { useRoom, useSelf } from "@liveblocks/react/suspense";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import * as Y from "yjs";
 import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { BlockNoteEditor } from "@blocknote/core";
-import { useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/shadcn/style.css";
 import stringToColor from "@/lib/stringToColor";
 
 type EditorProps = {
   doc: Y.Doc;
-  provider: any;
+  provider: LiveblocksYjsProvider;
   darkMode: boolean;
 };
 
 function BlockNote({ doc, provider, darkMode }: EditorProps) {
   const userInfo = useSelf((me) => me.info);
-  const editor: BlockNoteEditor = useCreateBlockNote({
-    collaboration: {
-      provider,
-      fragment: doc.getXmlFragment("document-store"),
-      user: {
-        name: userInfo?.name,
-        color: stringToColor(userInfo?.email),
-      },
-    },
-  });
+  const [editor, setEditor] = useState<BlockNoteEditor | null>(null);
+
+  // Memoize user info to prevent unnecessary re-creation
+  const collaborationUser = useMemo(
+    () => ({
+      name: userInfo?.name || "Anonymous",
+      color: stringToColor(userInfo?.email || "default"),
+    }),
+    [userInfo?.name, userInfo?.email]
+  );
+
+  // Create editor in useEffect to avoid setState during render
+  useEffect(() => {
+    let editorInstance: BlockNoteEditor | null = null;
+
+    const initializeEditor = () => {
+      if (!provider.synced || editorInstance) return;
+
+      try {
+        editorInstance = BlockNoteEditor.create({
+          collaboration: {
+            provider,
+            fragment: doc.getXmlFragment("document-store"),
+            user: collaborationUser,
+          },
+        });
+
+        setEditor(editorInstance);
+      } catch (error) {
+        console.error("Failed to create BlockNote editor:", error);
+      }
+    };
+
+    if (provider.synced) {
+      initializeEditor();
+    } else {
+      provider.on("sync", initializeEditor);
+    }
+
+    return () => {
+      provider.off("sync", initializeEditor);
+    };
+  }, [doc, provider]);
+
+  useEffect(() => {
+    if (editor) {
+      // Update user info if editor supports it
+      // BlockNote might not expose this - check their API
+    }
+  }, [collaborationUser, editor]);
+
+  if (!editor) {
+    return (
+      <div className="relative max-w-6xl mx-auto min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading editor...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative max-w-6xl mx-auto">
       <BlockNoteView
