@@ -32,26 +32,28 @@ function DeleteDocument() {
       if (success) {
         setIsOpen(false);
         router.replace("/");
-        toast.success("Room Deleted successfully!");
+        toast.success("Room deleted successfully!");
       } else {
-        toast.error("Failed to delete room!");
+        toast.error("Failed to delete room.");
       }
     });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <Button asChild variant={"destructive"}>
-        <DialogTrigger>Delete</DialogTrigger>
-      </Button>
+      <DialogTrigger asChild>
+        <Button variant={"destructive"}>Delete</Button>
+      </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure you want to Delete?</DialogTitle>
+          <DialogTitle>Are you sure?</DialogTitle>
           <DialogDescription>
-            This will delete the document and all its contents, removing all
-            user from document.
+            This action will permanently delete this document and remove all
+            users from access.
           </DialogDescription>
         </DialogHeader>
+
         <DialogFooter className="sm:justify-end gap-2">
           <Button
             type="button"
@@ -63,7 +65,7 @@ function DeleteDocument() {
           </Button>
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              Cancel
             </Button>
           </DialogClose>
         </DialogFooter>

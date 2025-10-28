@@ -1,13 +1,11 @@
 "use client";
 
-import { deleteDocument, inviteUserToDocument } from "@/lib/actions";
+import { inviteUserToDocument } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -34,35 +32,36 @@ function InviteUser() {
       if (success) {
         setIsOpen(false);
         setEmail("");
-        toast.success("User Added to Room successfully!");
+        toast.success("User added successfully!");
       } else {
-        toast.error("Failed to add user to room!");
+        toast.error("Failed to add user.");
       }
     });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <Button asChild variant={"outline"}>
-        <DialogTrigger>Invite</DialogTrigger>
-      </Button>
+      <DialogTrigger asChild>
+        <Button variant={"outline"}>Invite</Button>
+      </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite a User to collaborate!</DialogTitle>
+          <DialogTitle>Invite a User to Collaborate</DialogTitle>
           <DialogDescription>
-            Enter the email of the user you want to invite
+            Enter the email of the user you want to invite.
           </DialogDescription>
         </DialogHeader>
-        <form className="flex gap-2 " onSubmit={handleInvite}>
+        <form className="flex gap-2 mt-3" onSubmit={handleInvite}>
           <Input
             type="email"
-            placeholder="Email"
-            className="w-full"
+            placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <Button type="submit" disabled={!email || isPending}>
-            {isPending ? "Inviting" : "Invite"}
+            {isPending ? "Inviting..." : "Invite"}
           </Button>
         </form>
       </DialogContent>
