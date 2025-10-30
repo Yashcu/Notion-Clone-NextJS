@@ -13,25 +13,33 @@ const Header = () => {
   const { user } = useUser();
 
   return (
-    <div className="flex items-center justify-between p-5">
+    <header className="w-full h-10 sticky top-0 z-50 bg-[#100E09] rounded-b-xl px-6 py-2 flex items-center justify-between">
       {user && (
-        <h1>
-          {user?.firstName}
-          {`'s`} Space
+        <h1 className="text-lg font-serif font-semibold text-white tracking-wide">
+          {user.firstName}&apos;s Space
         </h1>
       )}
-      <Breadcrumbs />
-      <div>
-        {/* Breadcrumbs */}
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
 
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
-    </div>
+      <Breadcrumbs />
+
+      <SignedOut>
+        <SignInButton mode="modal">
+          <button className="px-4 py-1 rounded-full bg-[#ede9e3] text-[#383433] font-medium hover:bg-[#d6d3d1] transition">
+            Sign In
+          </button>
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <UserButton
+          appearance={{
+            elements: {
+              avatarBox:
+                "ring-2 ring-[#FFF] ring-offset-2 ring-offset-[#383433]",
+            },
+          }}
+        />
+      </SignedIn>
+    </header>
   );
 };
 
